@@ -1,0 +1,71 @@
+version: '3.7'
+
+services:
+  mariadb:
+    container_name: mariadb
+    volumes:
+    - mariadb:/var/lib/mysql
+    ports:
+    - "3306:3306"
+    networks:
+    - docker-network
+    build:
+      context: requirements/mariadb
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  
+  wordpress:
+    container_name: wordpress
+    volumes:
+      - wordpress:/var/www/html
+    ports:
+      - "9000:9000"
+    networks:
+      - docker-network
+    depends_on:
+      - mariadb
+    build:
+      context: requirements/wordpress
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: on-failure
+
+
+  nginx:
+    container_name: nginx
+    volumes:
+      - wordpress:/var/www/html
+    ports:
+      - "443:443"
+    networks:
+      - docker-network
+    depends_on:
+      - wordpress
+    build:
+      context: requirements/nginx
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: on-failure
+   
+volumes:
+  wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/smarty/data/wordpress'
+  mariadb:
+     driver: local
+     driver_opts:
+      type: 'none' 
+      o: 'bind'
+      device: '/home/smarty/data/mariadb'
+    
+networks:
+  docker-network:
+    driver: bridge
