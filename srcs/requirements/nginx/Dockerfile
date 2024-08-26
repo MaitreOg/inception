@@ -1,9 +1,8 @@
 FROM debian:bullseye
 
 #instal package
-RUN apt update -y && apt upgrade -y
-RUN apt-get install nginx -y
-RUN apt-get install openssl -y
+RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get install nginx openssl -y
 
 #create directory
 RUN mkdir -p /etc/nginx/ssl /etc/nginx/conf.d
@@ -15,7 +14,7 @@ RUN openssl req -x509 -nodes \
     -subj "/C=FR/ST=Perpignan/L=Perpignan/O=42/OU=42Perpignan/CN=smarty.42.fr/UID=login"
 
 #copy config file
-COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+COPY conf/nginx.conf /etc/nginx/nginx.conf
 
 #add permission
 RUN chmod -R 755 /var/www/html
