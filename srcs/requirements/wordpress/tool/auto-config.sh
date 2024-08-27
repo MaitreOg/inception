@@ -7,11 +7,13 @@ sleep 10
 cd /var/www/html
 
 # Afficher le contenu du répertoire pour le débogage
-ls -la /var/www/html
+#ls -la /var/www/html
 
 echo "MYSQL_DATABASE=${MYSQL_DATABASE}"
 echo "MYSQL_USER=${MYSQL_USER}"
 echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
+echo "WORDPRESS_ADMIN_USER=${WP_ADMIN_USER}"
+echo "WORDPRESS_ADMIN_PASSWORD=${WP_ADMIN_PASSWORD}"
 
 # Vérifier si le fichier wp-config.php existe déjà
 if [ ! -f wp-config.php ]; then
@@ -24,17 +26,29 @@ if [ ! -f wp-config.php ]; then
     --path='/var/www/html'
 fi
 
+if wp core is-installed --allow-root --path='/var/www/html'; then
+  echo "Resetting WordPress installation..."
+  wp db reset --yes --allow-root --path='/var/www/html'
+fi
+
 # Installer WordPress si ce n'est pas déjà fait
 if ! wp core is-installed --allow-root --path='/var/www/html'; then
   echo "Installing WordPress..."
   wp core install --allow-root \
     --url="https://smarty.42.fr" \
     --title="Inception" \
-    --admin_user="superUser" \
-    --admin_password="superUser" \
-    --admin_email="admin@example.com" \
+    --admin_user=$WP_ADMIN_USER \
+    --admin_password=$WP_ADMIN_PASSWORD \
+    --admin_email="r@r.fr" \
     --path='/var/www/html'
 fi
+
+echo "Username: $WP_USER"
+echo "Email: $WP_EMAIL"
+echo "Password: $WP_PASSWORD"
+
+#create new user with editor perm
+wp user create $WP_USER $WP_EMAIL --role=editor --user_pass=$WP_PASSWORD --allow-root --path='/var/www/html'
 
 # Lancer PHP-FPM
 /usr/sbin/php-fpm7.4 -F
