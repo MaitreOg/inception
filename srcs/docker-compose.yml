@@ -58,13 +58,13 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/home/smarty/data/wordpress'
+      device: ${WP_VOL_PATH}
   mariadb:
      driver: local
      driver_opts:
       type: 'none' 
       o: 'bind'
-      device: '/home/smarty/data/mariadb'
+      device: ${MDB_VOL_PATH}
     
 networks:
   docker-network:
