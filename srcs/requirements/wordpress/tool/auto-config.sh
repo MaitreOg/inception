@@ -35,11 +35,11 @@ fi
 if ! wp core is-installed --allow-root --path='/var/www/html'; then
   echo "Installing WordPress..."
   wp core install --allow-root \
-    --url="https://smarty.42.fr" \
-    --title="Inception" \
+    --url=$WP_URL \
+    --title=$WP_TITLE \
     --admin_user=$WP_ADMIN_USER \
     --admin_password=$WP_ADMIN_PASSWORD \
-    --admin_email="r@r.fr" \
+    --admin_email=$WP_ADMIN_EMAIL \
     --path='/var/www/html'
 fi
 
